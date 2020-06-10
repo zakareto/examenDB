@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Agregar Prenda</title>
+</head>
+<body>
+ <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBCmhLeW4Tm1AXXF_R1hFP_q6sklJ_i8AI",
+    authDomain: "datos-53800.firebaseapp.com",
+    databaseURL: "https://datos-53800.firebaseio.com",
+    projectId: "datos-53800",
+    storageBucket: "datos-53800.appspot.com",
+    messagingSenderId: "266679657746",
+    appId: "1:266679657746:web:e1d4306ffa6959e8237fcb"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  //Guardando la info en la BD de FireBase
+// crear referencia a la BD
+var dataDB= firebase.database().ref('Prendas').push();
+
+function enviar()
+{
+  var clave= document.getElementById('clave');
+	var descripcion= document.getElementById('descripcion');
+	var valor= document.getElementById('valor');
+
+	dataDB.set({
+      clave:clave.value,
+			descripcion: descripcion.value,
+			valor: valor.value
+		});
+	alert('Prenda agregada correctamente');
+}
+
+</script>
+<style>
+
+  body {
+    background-image: url('https://picserio.com/data/out/284/kirby-wallpaper_4951368.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  </style>
+  <CENTER>
+<h1 style="color:#a3d3db; text-shadow: 0.1em 0.1em 0.1em black">Agregar una prenda</h1>
+<form action="" method="post">
+  <input type="number" name="clave" id="clave" placeholder="clave"> <br> <br>
+	<input type="text" name="descripcion" id="descripcion" placeholder="descripcion"> <br> <br>
+	<input type="number" name="valor" id="valor" placeholder="precio"> <br> <br>
+	<button id="submit_button" type="submit" onclick="enviar()">Guardar</button>
+	<input type="button" onclick="location.href='vistaprenda.html';" value="Regresar"/>
+</form>
+<img src="KirbyQuestion.gif">
+  </CENTER>
+
+</body>
+</html>

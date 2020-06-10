@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Empe&ntilde;ar</title>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBCmhLeW4Tm1AXXF_R1hFP_q6sklJ_i8AI",
+    authDomain: "datos-53800.firebaseapp.com",
+    databaseURL: "https://datos-53800.firebaseio.com",
+    projectId: "datos-53800",
+    storageBucket: "datos-53800.appspot.com",
+    messagingSenderId: "266679657746",
+    appId: "1:266679657746:web:e1d4306ffa6959e8237fcb"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  var dataDB = firebase.database().ref('Clientes');
+var dataDBP = firebase.database().ref('Prendas');
+var dataVP = firebase.database().ref('Prenda-noo');
+
+var clientes={};
+var prendas={};
+dataDB.on('value', function(datos)
+{
+  //$('usuarios').children().remove();
+  clientes=datos.val();
+  var select= document.getElementById('clientes');
+  $.each(clientes, function(indice,valor)
+  {
+   var option= document.createElement("option");
+   option.setAttribute("value", indice);
+   option.setAttribute("label", valor.nombre);
+   select.appendChild(option);
+ });
+}, function(objetoError){
+  console.log('Error de lectura:'+objetoError.code);
+});
+
+getProductos();
+
+function getProductos()
+{
+  dataDBP.on('value', function(datos)
+  {
+  //$('usuarios').children().remove();
+  prendas=datos.val();
+  for (var i = 1; i <=3; i++) {
+    var select= document.getElementById('prenda_' + i);
+    $.each(prendas, function(indice,valor)
+    {
+     var option= document.createElement("option");
+     option.setAttribute("value", indice);
+     option.setAttribute("label", valor.descripcion);
+     select.appendChild(option);
+   });
+  }
+});
+}
+
+function getPrecio(productx, preciox)
+{
+  document.getElementById(preciox).value="";
+  var prenda=dataDBP.child(productx);
+  prenda.on('value', function (data){
+    var prod=data.val();
+		var pre=prod.valor;
+		$('#'+preciox).val(pre);
+  });
+}
+
+/*function calcImporte(cant, precio, importe)
+{
+  document.getElementById(importe).value="";
+  var imp=cant * precio;
+  document.getElementById(importe).value=imp;
+}*/
+
+function guardarVenta() {
+  // Extraer la clave del usuario
+  var user = document.getElementById('clientes');
+  // Extraer la fecha del sistema
+  var d = new Date();
+  var m= d.getMonth()+1;
+  var mes= (m<10)? '0'+m:m;
+  var fechag =  d.getFullYear() + "-" + mes + "-" + d.getDate();
+  //Guardando la venta
+  dataDB.child(user.value).child('empenos').push({
+    fecha: fechag
+  });
+  alert('Empeno registrado');
+}
+
+function calcularTotal(idventa)
+{
+    var user = document.getElementById('clientes');
+    var query = dataDB.child(user.value).child('empeños').limitToLast(1);
+    query.on('child_added', function (snap)
+    {
+     document.getElementById(idventa).value =snap.key;
+    });
+    var id=document.getElementById(idventa).value;
+    var total=0;
+    for (var i = 1; i <=3; i++) {
+      var prod=document.getElementById('prenda_' + i).value;
+      //var imp=document.getElementById('importe_' + i).value;
+      
+       
+          if(prod!=0)
+          {
+            total+=parseInt(document.getElementById('precio_' + i).value);
+            dataVP.push({
+              idprenda: prod,
+              idempeno: id
+          });
+          }
+      
+    }
+    alert('El importe total es ' + total);
+		
+}
+
+</script>
+<style>
+
+  body {
+    background-image: url('kirbywall.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  </style>
+<CENTER>
+<h1 style="font-family: 'Libre Baskerville', serif; color: rgb(147, 222, 241); text-shadow: 0.1em 0.1em 0.1em black"> Empe&ntilde;ar </h1>
+<form action="" method="post">
+  <input type="hidden" id="idVenta">
+  <select id="clientes">
+    <option value="0">Cliente</option>
+  </select>
+  <button id="generarVenta" type="button" onclick="guardarVenta()">Iniciar empe&ntilde;o</button>
+  <table>
+    <thead>
+      <th>Producto</th>
+      
+      <th>Precio</th>
+      
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <select id="prenda_1" onchange="getPrecio(this.value,'precio_1')">
+            <option value="0">prenda 1</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_1">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <select id="prenda_2" onchange="getPrecio(this.value,'precio_2')">
+            <option value="0">prenda 2</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_2">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <select id="prenda_3" onchange="getPrecio(this.value,'precio_3')">
+            <option value="0">prenda 3</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_3">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <div>
+    <button id="finalizar" type="button" onclick="calcularTotal('idVenta')">Guardar empe&ntilde;o</button>
+
+		<input type="button" onclick="location.href='vistaPrincipal.html';" value="Regresar"/>
+  </div>
+</form>
+<img src="victorydance.gif" style="width:200px;height:200px;" bottom: 10px >	
+</CENTER>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lista de clientes</title>
+</head>
+<body>
+	 <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBCmhLeW4Tm1AXXF_R1hFP_q6sklJ_i8AI",
+    authDomain: "datos-53800.firebaseapp.com",
+    databaseURL: "https://datos-53800.firebaseio.com",
+    projectId: "datos-53800",
+    storageBucket: "datos-53800.appspot.com",
+    messagingSenderId: "266679657746",
+    appId: "1:266679657746:web:e1d4306ffa6959e8237fcb"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+var refDB = firebase.database().ref().child('Clientes');
+var Clientes={};
+refDB.on('value',function(datos)
+{
+		$("tbody").children().remove()
+    Clientes=datos.val();
+    // Recorremos los productos y los mostramos
+    $.each(Clientes, function(indice,valor)
+    {
+        var tBody = document.getElementById('dataTable').lastElementChild;
+        var tr1 = document.createElement('tr');
+        tBody.appendChild(tr1);
+		var prevProducto ='<td>'+valor.clave+'</td>';
+    	 prevProducto +='<td>'+valor.apellido+'</td>';
+        prevProducto+='<td>'+valor.nombre+'</td>';
+        prevProducto+='<td>'+valor.telefono+'</td>';
+        prevProducto+='<td><button type="button" class="btn btn-warning" onclick="editar(\''+indice+'\')">Editar</button></td>';
+        prevProducto+='<td><button type="button" class="btn btn-danger" onclick="borrar(\''+indice+'\')">Borrar</button></td>';
+
+        $(prevProducto).appendTo(tr1);
+
+    });
+
+},function(objetoError){
+    console.log('Error de lectura:'+objetoError.code);
+});
+
+function editar(id)
+{
+    // Para pasar el ID a otro proceso lo hacemos a través de window.name
+    window.name= id;
+
+    // Cargamos la página editarproducto.html
+    location.assign('editarcliente.html');
+}
+
+
+
+function borrar(id)
+{
+	if(confirm("¿Esta seguro de que desea borrar al Cliente?")==true)
+	{
+		refDB.child(id).remove();
+	}
+}
+
+function buscar(Cliente){
+		if (Cliente != "") {
+			refDB.orderByChild('nombre').equalTo(Cliente).limitToFirst(5).on('value',function(datos)
+			{
+					$("tbody").children().remove()
+					Guisados=datos.val();
+					// Recorremos los productos y los mostramos
+					$.each(Guisados, function(indice,valor)
+					{
+							var tBody = document.getElementById('dataTable').lastElementChild;
+							var tr1 = document.createElement('tr');
+							tBody.appendChild(tr1);
+							var prevProducto='<td>'+valor.clave+'</td>';
+							prevProducto+='<td>'+valor.apellido+'</td>';
+							prevProducto+='<td>'+valor.nombre+'</td>';
+							prevProducto+='<td>'+valor.telefono+'</td>';
+							prevProducto+='<td><button type="button" class="btn btn-warning" onclick="editar(\''+indice+'\')">Editar</button></td>';
+							prevProducto+='<td><button type="button" class="btn btn-danger" onclick="borrar(\''+indice+'\')">Borrar</button></td>';
+
+							$(prevProducto).appendTo(tr1);
+
+					});
+
+			},function(objetoError){
+					console.log('Error de lectura:'+objetoError.code);
+			});
+		} else {
+			refDB.on('value',function(datos)
+			{
+					$("tbody").children().remove()
+			    Clientes=datos.val();
+			    // Recorremos los productos y los mostramos
+			    $.each(Clientes, function(indice,valor)
+			    {
+			        var tBody = document.getElementById('dataTable').lastElementChild;
+			        var tr1 = document.createElement('tr');
+			        tBody.appendChild(tr1);
+					var prevProducto='<td>'+valor.apellido+'</td>';
+			        prevProducto+='<td>'+valor.apellido+'</td>';
+			        prevProducto+='<td>'+valor.nombre+'</td>';
+			        prevProducto+='<td>'+valor.telefono+'</td>';
+			        prevProducto+='<td><button type="button" class="btn btn-warning" onclick="editar(\''+indice+'\')">Editar</button></td>';
+			        prevProducto+='<td><button type="button" class="btn btn-danger" onclick="borrar(\''+indice+'\')">Borrar</button></td>';
+
+			        $(prevProducto).appendTo(tr1);
+
+			    });
+
+			},function(objetoError){
+			    console.log('Error de lectura:'+objetoError.code);
+			});
+		}
+
+}
+
+	</script>
+	<style>
+
+		body {
+		  background-image: url('https://images8.alphacoders.com/970/970019.png');
+		  background-repeat: no-repeat;
+		  background-size: cover;
+		}
+		</style>
+<div class="container-fluid" id="listado">
+	<CENTER>
+		
+			
+		
+		<h1>Clientes</h1>
+		
+				<form action="" method="post">
+					<label for="">Buscar por Nombre:</label>
+					<input type="text" name="Cliente" id="Cliente">
+					<button id="submit_button" type="button" onclick="buscar(Cliente.value)">Buscar</button> <br> <br>
+          <input type="button" onclick="location.href='vistaPrincipal.html';" value="Regresar"/>
+          <input type="button" onclick="location.href='nuevocliente.html';" value="Agregar"/>
+
+				</form>
+				<br><br>
+				
+        <table id="dataTable" border="1px" border-color="#000" width="800px">
+          <thead bgcolor="lightblue">
+			<th>clave</th><th>Apellido</th><th>Nombre</th><th>Telefono</th><th colspan="2">Acciones</th>
+  </thead>
+
+  <tbody bgcolor="white"></tbody>
+</table>
+
+</CENTER>
+	</div>
+	<img src="kirby.gif" style="width:200px;height:200px;" bottom: 10px >	
+
+	
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Agregar Cliente</title>
+</head>
+<body>
+ <!-- The core Firebase JS SDK is always required and must be listed first -->
+ <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ 
+ <!-- TODO: Add SDKs for Firebase products that you want to use
+	  https://firebase.google.com/docs/web/setup#available-libraries -->
+ 
+ <script>
+   // Your web app's Firebase configuration
+   var firebaseConfig = {
+	 apiKey: "AIzaSyBCmhLeW4Tm1AXXF_R1hFP_q6sklJ_i8AI",
+	 authDomain: "datos-53800.firebaseapp.com",
+	 databaseURL: "https://datos-53800.firebaseio.com",
+	 projectId: "datos-53800",
+	 storageBucket: "datos-53800.appspot.com",
+	 messagingSenderId: "266679657746",
+	 appId: "1:266679657746:web:e1d4306ffa6959e8237fcb"
+   };
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
+
+  //Guardando la info en la BD de FireBase
+// crear referencia a la BD
+var dataDB= firebase.database().ref('Clientes').push();
+
+function enviar()
+{
+	var clave= document.getElementById('clave');
+	var apellido= document.getElementById('apellido');
+	var nombre= document.getElementById('nombre');
+	var telefono= document.getElementById('telefono');
+	dataDB.set({
+			clave: clave.value,
+			apellido: apellido.value,
+			nombre: nombre.value,
+			telefono: telefono.value
+		});
+	alert('Cliente agregado correctamente');
+}
+
+</script>
+<style>
+
+	body {
+	  background-image: url('https://images8.alphacoders.com/970/970019.png');
+	  background-repeat: no-repeat;
+	  background-size: cover;
+	}
+	</style>
+<CENTER>
+<h1>Agregar un Cliente</h1>
+<form action="" method="post">
+	<input type="number" name="clave" id="clave" placeholder="clave"> <br> <br>
+	<input type="text" name="apellido" id="apellido" placeholder="Apellido"> <br> <br>
+	<input type="nombre" name="nombre" id="nombre" placeholder="Nombre "> <br> <br>
+	<input type="number" name="telefono" id="telefono" maxlength="10" placeholder="Telefono"> <br> <br>
+	<button id="submit_button" type="submit" onclick="enviar()">Guardar</button>
+	<input type="button" onclick="location.href='clientesvista.html';" value="Regresar"/>
+</form>
+<img src="KirbyQuestion.gif">
+</CENTER>
+</body>
+</html>
